@@ -44,7 +44,7 @@ final class SettingsViewController: BaseViewController {
         let output = viewModel.transform(input: input)
         
         output.items
-            .bind(to: tableView.rx.items(cellIdentifier: SettingsTableViewCell.identifier, cellType: SettingsTableViewCell.self)) { row, element, cell in
+            .drive(tableView.rx.items(cellIdentifier: SettingsTableViewCell.identifier, cellType: SettingsTableViewCell.self)) { row, element, cell in
                 cell.configure(with: element)
             }
             .disposed(by: disposeBag)

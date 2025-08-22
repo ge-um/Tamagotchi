@@ -15,13 +15,15 @@ final class SettingsViewModel: InputOutput {
     }
     
     struct Output {
-        let items: Observable<[Setting]>
+        let items: Driver<[Setting]>
     }
     
     init() {}
     
     func transform(input: Input) -> Output {
-        let items = Observable.just(Setting.list)
+        let items = BehaviorRelay(value: Setting.list)
+            .asDriver()
+
         return Output(items: items)
     }
 }
