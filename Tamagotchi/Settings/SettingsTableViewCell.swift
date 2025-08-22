@@ -36,6 +36,7 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
         return stackView
     }()
     
+    // TODO: - cell에서 prepareForReuse를 안 써도 네비게이션이 중첩안되는 이유는 뭘까?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()

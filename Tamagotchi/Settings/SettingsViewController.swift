@@ -48,5 +48,18 @@ final class SettingsViewController: BaseViewController {
                 cell.configure(with: element)
             }
             .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .map { $0.row }
+            .bind(with: self) { owner, row in
+                
+                if row == 0 {
+                    let vc = UIViewController()
+                    vc.view.backgroundColor = .blue1
+                    vc.title = "대장님 이름 정하기"
+                    owner.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
