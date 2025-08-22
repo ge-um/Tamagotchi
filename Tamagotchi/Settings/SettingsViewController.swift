@@ -40,7 +40,7 @@ final class SettingsViewController: BaseViewController {
     }
     
     private func bind() {
-        let input = SettingsViewModel.Input()
+        let input = SettingsViewModel.Input(itemSelected: tableView.rx.itemSelected)
         let output = viewModel.transform(input: input)
         
         output.items
@@ -49,10 +49,8 @@ final class SettingsViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        tableView.rx.itemSelected
-            .map { $0.row }
-            .bind(with: self) { owner, row in
-                
+        output.nextViewController
+            .drive(with: self) { owner, row in
                 if row == 0 {
                     let vc = UIViewController()
                     vc.view.backgroundColor = .blue1
