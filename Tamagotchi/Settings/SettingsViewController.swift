@@ -10,24 +10,6 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-struct Setting {
-    let icon: String
-    let title: String
-    let detail: String
-    
-    init(icon: String, title: String, detail: String = "") {
-        self.icon = icon
-        self.title = title
-        self.detail = detail
-    }
-    
-    static let list = [
-        Setting(icon: "pencil", title: "내 이름 설정하기", detail: "고래밥"),
-        Setting(icon: "moon.fill", title: "다마고치"),
-        Setting(icon: "arrow.clockwise", title: "데이터 초기화")
-    ]
-}
-
 final class SettingsViewController: BaseViewController {
     let tableView: UITableView = {
        let tableView = UITableView()
@@ -39,8 +21,7 @@ final class SettingsViewController: BaseViewController {
     }()
     
     private let disposeBag = DisposeBag()
-    
-    lazy var items = Observable.just(Setting.list)
+    private let viewModel = SettingsViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +40,10 @@ final class SettingsViewController: BaseViewController {
     }
     
     private func bind() {
-        items
+        let input = SettingsViewModel.Input()
+        let output = viewModel.transform(input: input)
+        
+        output.items
             .bind(to: tableView.rx.items(cellIdentifier: SettingsTableViewCell.identifier, cellType: SettingsTableViewCell.self)) { row, element, cell in
                 cell.configure(with: element)
             }
