@@ -103,15 +103,7 @@ final class MainViewController: BaseViewController {
             make.top.equalTo(tamagotchiView.snp.bottom).offset(12)
             make.centerX.equalTo(view.safeAreaLayoutGuide)
         }
-        
-//        mealView.snp.makeConstraints { make in
-//            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
-//        }
-//        
-//        waterView.snp.makeConstraints { make in
-//            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
-//        }
-        
+
         feedStackView.snp.makeConstraints { make in
             make.top.equalTo(statusLabel.snp.bottom).offset(16)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(44)
