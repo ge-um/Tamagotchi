@@ -138,19 +138,25 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
+        // TODO: - self 떼내기
         Observable.combineLatest(meal, water)
             .compactMap { (Int($0.0 ?? "0")!, Int($0.1 ?? "0")!) }
             .map { meal, water in
-                let level = meal/5 + water/2
+                let calculated = meal/5 + water/2
+                let level = calculated < 1 ? 1 : min(calculated, 10)
                 
                 UserDefaults.standard.set(level, forKey: .level)
                 UserDefaults.standard.set(meal, forKey: .meal)
                 UserDefaults.standard.set(water, forKey: .water)
+                
+                self.tamagotchiView.tamagotchi.level = level == 10 ? 9 : level
+                self.tamagotchiView.updateImage()
 
-                return "LV\(level < 1 ? 1 : level) · 밥알 \(meal)개 · 물방울 \(water)개"
+                return "LV\(level) · 밥알 \(meal)개 · 물방울 \(water)개"
             }
             .bind(to: statusLabel.rx.text)
             .disposed(by: disposeBag)
+        
                 
         NotificationCenter.default.rx
             .notification(UserDefaults.didChangeNotification)

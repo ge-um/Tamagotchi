@@ -7,6 +7,8 @@
 
 import SnapKit
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class TamagotchiView: UIStackView {
     private lazy var tamagotchiImageView: UIImageView = {
@@ -28,7 +30,7 @@ final class TamagotchiView: UIStackView {
         return label
     }()
     
-    private let tamagotchi: Tamagotchi
+    var tamagotchi: Tamagotchi
 
     init(tamagotchi: Tamagotchi) {
         self.tamagotchi = tamagotchi
@@ -58,5 +60,9 @@ final class TamagotchiView: UIStackView {
             make.height.equalTo(32)
             make.width.equalTo(116)
         }
+    }
+    
+    func updateImage() {
+        tamagotchiImageView.image = UIImage(named: tamagotchi.imageName)
     }
 }
