@@ -138,6 +138,10 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
+        message
+            .bind(to: messageLabel.rx.text)
+            .disposed(by: disposeBag)
+        
         // TODO: - self 떼내기
         Observable.combineLatest(meal, water)
             .compactMap { (Int($0.0 ?? "0")!, Int($0.1 ?? "0")!) }
