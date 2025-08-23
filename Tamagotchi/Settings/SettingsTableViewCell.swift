@@ -81,7 +81,7 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
         itemTitle.text = data.title
         
         if row == 0 {
-            nameLabel.text = "대장"
+            nameLabel.text = UserDefaults.standard.string(forKey: .name) ?? "대장"
         }
     }
     
