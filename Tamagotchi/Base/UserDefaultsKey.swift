@@ -9,6 +9,9 @@ import Foundation
 
 enum UserDefaultsKey: String {
     case name
+    case level
+    case meal
+    case water
 }
 
 extension UserDefaults {

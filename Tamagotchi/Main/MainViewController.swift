@@ -12,7 +12,6 @@ import UIKit
 final class MainViewController: BaseViewController {
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "복습 아직 안하셨다구요> 지금 잠이 오세여?? 대장님 ??"
         label.textAlignment = .center
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 14)
@@ -35,7 +34,6 @@ final class MainViewController: BaseViewController {
     
     private let statusLabel: UILabel = {
         let label = UILabel()
-        label.text = "LV1 · 밥알 0개 · 물방울 0개"
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .accent
         return label
@@ -53,6 +51,9 @@ final class MainViewController: BaseViewController {
     }()
     
     private let name = BehaviorRelay(value: UserDefaults.standard.string(forKey: .name))
+    private let level = BehaviorRelay(value: UserDefaults.standard.string(forKey: .level))
+    private let meal = BehaviorRelay(value: UserDefaults.standard.string(forKey: .meal))
+    private let water = BehaviorRelay(value: UserDefaults.standard.string(forKey: .water))
     
     private lazy var message = BehaviorRelay(value: talks.randomElement()!)
     private var talks: [String] {
@@ -64,7 +65,7 @@ final class MainViewController: BaseViewController {
             "\(userName)님!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         ]
     }
-
+    
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -137,16 +138,38 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        mealView.feedButton.rx.tap
-            .asDriver()
-            .drive(with: self) { owner, _ in
-                owner.messageLabel.text = owner.talks.randomElement()!
+        Observable.combineLatest(level, meal, water)
+            .map { "LV\($0.0 ?? "1") · 밥알 \($0.1 ?? "0")개 · 물방울 \($0.2 ?? "0")개" }
+            .bind(to: statusLabel.rx.text)
+            .disposed(by: disposeBag)
+                
+        NotificationCenter.default.rx
+            .notification(UserDefaults.didChangeNotification)
+            .subscribe(with: self) { owner, _ in
+                owner.name.accept(UserDefaults.standard.string(forKey: .name))
             }
             .disposed(by: disposeBag)
         
+        mealView.feedButton.rx.tap
+            .withLatestFrom(mealView.textField.rx.text.orEmpty)
+            .filter { $0.allSatisfy { $0.isNumber } }
+            .compactMap { Int($0) ?? 1 }
+            .filter { $0 < 100 }
+            .subscribe(with: self) { owner, add in
+                let count = Int(owner.meal.value ?? "0")! + add
+                owner.meal.accept("\(count)")
+                owner.messageLabel.text = owner.talks.randomElement()!
+            }
+            .disposed(by: disposeBag)
+
         waterView.feedButton.rx.tap
-            .asDriver()
-            .drive(with: self) { owner, _ in
+            .withLatestFrom(waterView.textField.rx.text.orEmpty)
+            .filter { $0.allSatisfy { $0.isNumber } }
+            .compactMap { Int($0) ?? 1 }
+            .filter { $0 < 50 }
+            .subscribe(with: self) { owner, add in
+                let count = Int(owner.water.value ?? "0")! + add
+                owner.water.accept("\(count)")
                 owner.messageLabel.text = owner.talks.randomElement()!
             }
             .disposed(by: disposeBag)

@@ -31,7 +31,7 @@ enum FeedType: String {
 }
 
 final class FeedView: UIView {
-    private lazy var textField: UITextField = {
+    lazy var textField: UITextField = {
        let textField = UITextField()
         textField.placeholder = type.placeholder
         textField.textAlignment = .center
