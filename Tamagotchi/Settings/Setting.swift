@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: detail 지우기
 struct Setting {
     let icon: String
     let title: String

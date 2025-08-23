@@ -52,9 +52,7 @@ final class SettingsViewController: BaseViewController {
         output.nextViewController
             .drive(with: self) { owner, row in
                 if row == 0 {
-                    let vc = UIViewController()
-                    vc.view.backgroundColor = .blue1
-                    vc.title = "대장님 이름 정하기"
+                    let vc = NameViewController()
                     owner.navigationController?.pushViewController(vc, animated: true)
                 }
             }
