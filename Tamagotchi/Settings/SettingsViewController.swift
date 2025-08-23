@@ -57,5 +57,14 @@ final class SettingsViewController: BaseViewController {
                 }
             }
             .disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx
+            .notification(UserDefaults.didChangeNotification)
+            .map { _ in UserDefaults.standard.string(forKey: .name) }
+            .subscribe(with: self) { owner, _ in
+                owner.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+            }
+//            .bind(to: nameLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }

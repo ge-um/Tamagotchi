@@ -44,7 +44,6 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()
-        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -83,13 +82,5 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
         if row == 0 {
             nameLabel.text = UserDefaults.standard.string(forKey: .name) ?? "대장"
         }
-    }
-    
-    private func bind() {
-        NotificationCenter.default.rx
-            .notification(UserDefaults.didChangeNotification)
-            .map { _ in UserDefaults.standard.string(forKey: .name) }
-            .bind(to: nameLabel.rx.text)
-            .disposed(by: disposeBag)
     }
 }
