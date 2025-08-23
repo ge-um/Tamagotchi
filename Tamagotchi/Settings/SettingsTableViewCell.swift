@@ -5,6 +5,8 @@
 //  Created by 금가경 on 8/22/25.
 //
 
+import RxSwift
+import RxCocoa
 import UIKit
 
 final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
@@ -20,7 +22,7 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
         return label
     }()
     
-    private let name: UILabel = {
+    private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 13, weight: .light)
         label.textColor = .accent
@@ -36,10 +38,13 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
         return stackView
     }()
     
+    private let disposeBag = DisposeBag()
+
     // TODO: - cell에서 prepareForReuse를 안 써도 네비게이션이 중첩안되는 이유는 뭘까?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -51,7 +56,7 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
         
         containerStackView.addArrangedSubview(icon)
         containerStackView.addArrangedSubview(itemTitle)
-        containerStackView.addArrangedSubview(name)
+        containerStackView.addArrangedSubview(nameLabel)
         
         contentView.addSubview(containerStackView)
         
@@ -71,9 +76,20 @@ final class SettingsTableViewCell: UITableViewCell, IsIdentifiable {
         accessoryType = .disclosureIndicator
     }
     
-    func configure(with data: Setting) {
+    func configure(row: Int, with data: Setting) {
         icon.image = UIImage(systemName: data.icon)
         itemTitle.text = data.title
-        name.text = data.detail
+        
+        if row == 0 {
+            nameLabel.text = "대장"
+        }
+    }
+    
+    private func bind() {
+        NotificationCenter.default.rx
+            .notification(UserDefaults.didChangeNotification)
+            .map { _ in UserDefaults.standard.string(forKey: .name) }
+            .bind(to: nameLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }

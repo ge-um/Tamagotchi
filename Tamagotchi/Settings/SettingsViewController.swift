@@ -45,7 +45,7 @@ final class SettingsViewController: BaseViewController {
         
         output.items
             .drive(tableView.rx.items(cellIdentifier: SettingsTableViewCell.identifier, cellType: SettingsTableViewCell.self)) { row, element, cell in
-                cell.configure(with: element)
+                cell.configure(row: row, with: element)
             }
             .disposed(by: disposeBag)
         

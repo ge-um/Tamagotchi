@@ -16,6 +16,7 @@ final class SettingsViewModel: InputOutput {
     
     struct Output {
         let items: Driver<[Setting]>
+        let name: BehaviorRelay<String>
         let nextViewController: Driver<Int>
     }
     
@@ -27,10 +28,12 @@ final class SettingsViewModel: InputOutput {
         let items = BehaviorRelay(value: Setting.list)
             .asDriver()
         
+        let name = BehaviorRelay(value: "고래밥")
+        
         let nextViewController = input.itemSelected
             .asDriver()
             .map { $0.row }
 
-        return Output(items: items, nextViewController: nextViewController)
+        return Output(items: items, name: name, nextViewController: nextViewController)
     }
 }
