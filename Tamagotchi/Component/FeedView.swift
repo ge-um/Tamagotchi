@@ -44,7 +44,7 @@ final class FeedView: UIView {
         return view
     }()
     
-    private lazy var feedButton: UIButton = {
+    lazy var feedButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.bordered()
         

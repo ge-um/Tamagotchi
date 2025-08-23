@@ -53,6 +53,18 @@ final class MainViewController: BaseViewController {
     }()
     
     private let name = BehaviorRelay(value: UserDefaults.standard.string(forKey: .name))
+    
+    private lazy var message = BehaviorRelay(value: talks.randomElement()!)
+    private var talks: [String] {
+        let userName = name.value ?? "대장님"
+        return [
+            "복습 아직 안하셨다구요? 지금 잠이 오세여? \(userName)님??",
+            "테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요? \(userName)님?",
+            "\(userName)님 오늘 깃허브 푸시 하셨어영?",
+            "\(userName)님!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        ]
+    }
+
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -125,5 +137,18 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
+        mealView.feedButton.rx.tap
+            .asDriver()
+            .drive(with: self) { owner, _ in
+                owner.messageLabel.text = owner.talks.randomElement()!
+            }
+            .disposed(by: disposeBag)
+        
+        waterView.feedButton.rx.tap
+            .asDriver()
+            .drive(with: self) { owner, _ in
+                owner.messageLabel.text = owner.talks.randomElement()!
+            }
+            .disposed(by: disposeBag)
     }
 }
