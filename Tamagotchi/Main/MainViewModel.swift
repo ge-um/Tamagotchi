@@ -11,11 +11,12 @@ import RxSwift
 
 final class MainViewModel: InputOutput {
     struct Input {
-        
+        let viewWillAppear: Observable<Void>
     }
     
     struct Output {
         let tamagotchi: Observable<Tamagotchi>
+        let title: Observable<String>
     }
     
     private let tamagotchi: Tamagotchi
@@ -27,7 +28,10 @@ final class MainViewModel: InputOutput {
     func transform(input: Input) -> Output {
         let tamagotchi = Observable.just(tamagotchi)
         
-        return Output(tamagotchi: tamagotchi)
+        let title = input.viewWillAppear
+            .map { "\(UserDefaults.standard.string(forKey: .name) ?? "대장")님의 다마고치"}
+        
+        return Output(tamagotchi: tamagotchi, title: title)
     }
     
 //    name

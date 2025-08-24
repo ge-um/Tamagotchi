@@ -50,13 +50,13 @@ final class MainViewController: BaseViewController {
         return stackView
     }()
     
-    private let name = BehaviorRelay(value: UserDefaults.standard.string(forKey: .name))
+    private let name = BehaviorRelay(value: UserDefaults.standard.string(forKey: .name) ?? "대장")
     private let meal = BehaviorRelay(value: UserDefaults.standard.string(forKey: .meal))
     private let water = BehaviorRelay(value: UserDefaults.standard.string(forKey: .water))
     
     private lazy var message = BehaviorRelay(value: talks.randomElement()!)
     private var talks: [String] {
-        let userName = name.value ?? "대장"
+        let userName = name.value
         return [
             "복습 아직 안하셨다구요? 지금 잠이 오세여? \(userName)님??",
             "테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요? \(userName)님?",
@@ -132,7 +132,7 @@ final class MainViewController: BaseViewController {
     }
     
     private func bind() {
-        let input = MainViewModel.Input()
+        let input = MainViewModel.Input(viewWillAppear: rx.methodInvoked(#selector(viewWillAppear)).map { _ in })
         let output = viewModel.transform(input: input)
         
         output.tamagotchi
@@ -140,11 +140,8 @@ final class MainViewController: BaseViewController {
                 owner.tamagotchiView.configure(with: tamagotchi)
             }
             .disposed(by: disposeBag)
-            
         
-        name
-            .compactMap { $0 }
-            .map { "\($0)님의 다마고치" }
+        output.title
             .bind(to: navigationItem.rx.title)
             .disposed(by: disposeBag)
         
