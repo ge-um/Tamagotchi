@@ -60,6 +60,9 @@ final class SelectViewController: BaseViewController {
         
         collectionView.rx.modelSelected(Tamagotchi.self)
             .bind(with: self) { owner, tamagotchi in
+                
+                guard tamagotchi.kind != .none else { return }
+                
                 let vc = SelectDetailViewController()
                 
                 vc.modalPresentationStyle = .overCurrentContext
@@ -71,3 +74,4 @@ final class SelectViewController: BaseViewController {
             .disposed(by: disposeBag)
     }
 }
+
