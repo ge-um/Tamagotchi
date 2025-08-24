@@ -65,7 +65,6 @@ final class SelectViewController: BaseViewController {
                 
                 vc.modalPresentationStyle = .overCurrentContext
                 vc.modalTransitionStyle = .crossDissolve
-//                vc.tamagotchi = tamagotchi
                 
                 owner.present(vc, animated: true)
             }
