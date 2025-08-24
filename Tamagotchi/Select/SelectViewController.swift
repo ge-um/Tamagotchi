@@ -8,7 +8,6 @@
 import SnapKit
 import RxCocoa
 import RxSwift
-
 import UIKit
 
 final class SelectViewController: BaseViewController {
@@ -58,6 +57,17 @@ final class SelectViewController: BaseViewController {
         tamagotchi
             .bind(to: collectionView.rx.items(cellIdentifier: TamagotchiCollectionViewCell.identifier, cellType: TamagotchiCollectionViewCell.self)) { row, tamagotchi, cell in
                 cell.tamagotchiView.configure(with: tamagotchi)
+            }
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.itemSelected
+            .bind(with: self) { owner, _ in
+                let vc = SelectDetailViewController()
+                
+                vc.modalPresentationStyle = .overFullScreen
+                vc.modalTransitionStyle = .crossDissolve
+                
+                owner.present(vc, animated: true)
             }
             .disposed(by: disposeBag)
     }
