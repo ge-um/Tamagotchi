@@ -28,9 +28,7 @@ final class SelectViewController: BaseViewController {
         
         return collectionView
     }()
-    
-    private let disposeBag = DisposeBag()
-    
+        
     private let tamagotchi = Observable.just((Kind.allCases + Array(repeating: Kind.none, count: 20))
         .map { Tamagotchi(kind: $0, level: 6) })
     
@@ -60,12 +58,13 @@ final class SelectViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        collectionView.rx.itemSelected
-            .bind(with: self) { owner, _ in
+        collectionView.rx.modelSelected(Tamagotchi.self)
+            .bind(with: self) { owner, tamagotchi in
                 let vc = SelectDetailViewController()
                 
-                vc.modalPresentationStyle = .overFullScreen
+                vc.modalPresentationStyle = .overCurrentContext
                 vc.modalTransitionStyle = .crossDissolve
+                vc.tamagotchi = tamagotchi
                 
                 owner.present(vc, animated: true)
             }

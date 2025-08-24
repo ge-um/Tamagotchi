@@ -67,9 +67,7 @@ final class MainViewController: BaseViewController {
     }
     
     private var tamagotchi = Tamagotchi(kind: .one, level: 1)
-        
-    private let disposeBag = DisposeBag()
-    
+            
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigation()
@@ -145,9 +143,10 @@ final class MainViewController: BaseViewController {
             .disposed(by: disposeBag)
         
         // TODO: - self 떼내기
+        // TODO: - refactoring
         Observable.combineLatest(meal, water)
             .compactMap { (Int($0.0 ?? "0")!, Int($0.1 ?? "0")!) }
-            .map { meal, water in
+            .map { (meal, water) in
                 let calculated = meal/5 + water/2
                 let level = calculated < 1 ? 1 : min(calculated, 10)
                 

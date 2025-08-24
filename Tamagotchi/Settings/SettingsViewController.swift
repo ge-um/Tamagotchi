@@ -20,7 +20,6 @@ final class SettingsViewController: BaseViewController {
         return tableView
     }()
     
-    private let disposeBag = DisposeBag()
     private let viewModel = SettingsViewModel()
 
     override func viewDidLoad() {
@@ -64,7 +63,6 @@ final class SettingsViewController: BaseViewController {
             .subscribe(with: self) { owner, _ in
                 owner.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
             }
-//            .bind(to: nameLabel.rx.text)
             .disposed(by: disposeBag)
     }
 }

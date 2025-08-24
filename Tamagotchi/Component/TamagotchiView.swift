@@ -28,8 +28,18 @@ final class TamagotchiView: UIStackView {
         return label
     }()
     
-    var tamagotchi: Tamagotchi
-
+    var tamagotchi = Tamagotchi(kind: .one, level: 1) {
+        didSet {
+            tamagotchiImageView.image = UIImage(named: tamagotchi.imageName)
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: .zero)
+        configureUI()
+        configure(with: tamagotchi)
+    }
+    
     init(tamagotchi: Tamagotchi) {
         self.tamagotchi = tamagotchi
         super.init(frame: .zero)
