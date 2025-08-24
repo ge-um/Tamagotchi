@@ -145,7 +145,6 @@ final class SelectDetailViewController: BaseViewController {
             .asDriver(onErrorJustReturn: Tamagotchi(kind: .one, level: 1))
             .drive(with: self) { owner, tamagotchi in
                 let mainVc = MainViewController(tamagotchi: tamagotchi)
-//                mainVc.tamagotchi = tamagotchi
                 let vc = UINavigationController(rootViewController: mainVc)
                 
                 if let sceneDelegate = UIApplication.shared.connectedScenes

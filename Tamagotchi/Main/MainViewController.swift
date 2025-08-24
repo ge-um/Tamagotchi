@@ -54,21 +54,26 @@ final class MainViewController: BaseViewController {
     private let meal = BehaviorRelay(value: UserDefaults.standard.string(forKey: .meal))
     private let water = BehaviorRelay(value: UserDefaults.standard.string(forKey: .water))
     
-//    private lazy var message = BehaviorRelay(value: talks.randomElement()!)
-//    private var talks: [String] {
-//        let userName = name.value
-//        return [
-//            "복습 아직 안하셨다구요? 지금 잠이 오세여? \(userName)님??",
-//            "테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요? \(userName)님?",
-//            "\(userName)님 오늘 깃허브 푸시 하셨어영?",
-//            "\(userName)님!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-//        ]
-//    }
+    // TODO: - MVVM 마저 분리하기
+    private lazy var message = BehaviorRelay(value: talks.randomElement()!)
+    private var talks: [String] {
+        let userName = name.value
+        return [
+            "복습 아직 안하셨다구요? 지금 잠이 오세여? \(userName)님??",
+            "테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요? \(userName)님?",
+            "\(userName)님 오늘 깃허브 푸시 하셨어영?",
+            "\(userName)님!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        ]
+    }
+    
+    // TODO: - 삭제하기
+    let tamagotchi: Tamagotchi
     
     private let viewModel: MainViewModel
     
     init(tamagotchi: Tamagotchi) {
         viewModel = MainViewModel(tamagotchi: tamagotchi)
+        self.tamagotchi = tamagotchi
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -157,23 +162,22 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
 
-        
-        // TODO: - self 떼내기
-        // TODO: - refactoring
         Observable.combineLatest(meal, water)
             .compactMap { meal, water -> (Int, Int) in
                 (Int(meal ?? "0")!, Int(water ?? "0")!)
             }
-            .map { (meal, water) -> String in
+            .map { (meal, water) -> Tamagotchi in
                 let calculated = meal/5 + water/2
-                let level = (calculated < 1) ? 1 : min(calculated, 10)
+                let level = max(1, min(calculated, 10))
                 
-//                self.tamagotchiView.tamagotchi.level = level == 10 ? 9 : level
-//                self.tamagotchiView.updateImage(with: self.tamagotchi)
-
-                return "LV\(level) · 밥알 \(meal)개 · 물방울 \(water)개"
+                var updatedTamagotchi = self.tamagotchi
+                updatedTamagotchi.level = level == 10 ? 9 : level
+                return updatedTamagotchi
             }
-            .bind(to: statusLabel.rx.text)
+            .bind(with: self) { owner, updatedTamagotchi in
+                owner.tamagotchiView.tamagotchi = updatedTamagotchi
+                owner.statusLabel.text = "LV\(updatedTamagotchi.level) · 밥알 \(owner.meal.value ?? "0")개 · 물방울 \(owner.water.value ?? "0")개"
+            }
             .disposed(by: disposeBag)
         
         meal
@@ -188,28 +192,28 @@ final class MainViewController: BaseViewController {
             .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .name) })
             .disposed(by: disposeBag)
         
-//        mealView.feedButton.rx.tap
-//            .withLatestFrom(mealView.textField.rx.text.orEmpty)
-//            .filter { $0.allSatisfy { $0.isNumber } }
-//            .compactMap { Int($0) ?? 1 }
-//            .filter { $0 < 100 }
-//            .subscribe(with: self) { owner, add in
-//                let count = Int(owner.meal.value ?? "0")! + add
-//                owner.meal.accept("\(count)")
-//                owner.messageLabel.text = owner.talks.randomElement()!
-//            }
-//            .disposed(by: disposeBag)
+        mealView.feedButton.rx.tap
+            .withLatestFrom(mealView.textField.rx.text.orEmpty)
+            .filter { $0.allSatisfy { $0.isNumber } }
+            .compactMap { Int($0) ?? 1 }
+            .filter { $0 < 100 }
+            .subscribe(with: self) { owner, add in
+                let count = Int(owner.meal.value ?? "0")! + add
+                owner.meal.accept("\(count)")
+                owner.messageLabel.text = owner.talks.randomElement()!
+            }
+            .disposed(by: disposeBag)
 
-//        waterView.feedButton.rx.tap
-//            .withLatestFrom(waterView.textField.rx.text.orEmpty)
-//            .filter { $0.allSatisfy { $0.isNumber } }
-//            .compactMap { Int($0) ?? 1 }
-//            .filter { $0 < 50 }
-//            .subscribe(with: self) { owner, add in
-//                let count = Int(owner.water.value ?? "0")! + add
-//                owner.water.accept("\(count)")
-//                owner.messageLabel.text = owner.talks.randomElement()!
-//            }
-//            .disposed(by: disposeBag)
+        waterView.feedButton.rx.tap
+            .withLatestFrom(waterView.textField.rx.text.orEmpty)
+            .filter { $0.allSatisfy { $0.isNumber } }
+            .compactMap { Int($0) ?? 1 }
+            .filter { $0 < 50 }
+            .subscribe(with: self) { owner, add in
+                let count = Int(owner.water.value ?? "0")! + add
+                owner.water.accept("\(count)")
+                owner.messageLabel.text = owner.talks.randomElement()!
+            }
+            .disposed(by: disposeBag)
     }
 }

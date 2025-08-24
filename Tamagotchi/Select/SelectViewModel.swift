@@ -27,26 +27,5 @@ final class SelectViewModel: InputOutput {
         return Output(tamagotchi: tamagotchi,
                       selectedTamagotchi: input.itemSelected
             .filter { $0.kind != .none } )
-        
-//        tamagotchi
-//            .bind(to: collectionView.rx.items(cellIdentifier: TamagotchiCollectionViewCell.identifier, cellType: TamagotchiCollectionViewCell.self)) { row, tamagotchi, cell in
-//                cell.tamagotchiView.configure(with: tamagotchi)
-//            }
-//            .disposed(by: disposeBag)
-//        
-//        collectionView.rx.modelSelected(Tamagotchi.self)
-//            .bind(with: self) { owner, tamagotchi in
-//                
-//                guard tamagotchi.kind != .none else { return }
-//                
-//                let vc = SelectDetailViewController()
-//                
-//                vc.modalPresentationStyle = .overCurrentContext
-//                vc.modalTransitionStyle = .crossDissolve
-//                vc.tamagotchi = tamagotchi
-//                
-//                owner.present(vc, animated: true)
-//            }
-//            .disposed(by: disposeBag)
     }
 }
