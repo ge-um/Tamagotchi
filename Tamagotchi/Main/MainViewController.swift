@@ -30,7 +30,7 @@ final class MainViewController: BaseViewController {
         return view
     }()
     
-    private let tamagotchiView = TamagotchiView(tamagotchi: Tamagotchi(kind: .one, level: 1))
+    private let tamagotchiView = TamagotchiView()
     
     private let statusLabel: UILabel = {
         let label = UILabel()
@@ -65,7 +65,11 @@ final class MainViewController: BaseViewController {
         ]
     }
     
-    private var tamagotchi = Tamagotchi(kind: .one, level: 1)
+    var tamagotchi = Tamagotchi(kind: .one, level: 1) {
+        didSet {
+            tamagotchiView.tamagotchi = tamagotchi
+        }
+    }
             
     override func viewDidLoad() {
         super.viewDidLoad()

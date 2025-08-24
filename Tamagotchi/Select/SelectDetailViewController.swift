@@ -124,8 +124,10 @@ final class SelectDetailViewController: BaseViewController {
     
     private func bind() {
         startButton.rx.tap
-            .bind {
-                let vc = UINavigationController(rootViewController: MainViewController())
+            .bind(with: self) { owner, _ in
+                let mainVc = MainViewController()
+                mainVc.tamagotchi = owner.tamagotchi
+                let vc = UINavigationController(rootViewController: mainVc)
                 
                 if let sceneDelegate = UIApplication.shared.connectedScenes
                     .first?.delegate as? SceneDelegate,
