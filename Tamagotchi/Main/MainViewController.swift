@@ -66,6 +66,8 @@ final class MainViewController: BaseViewController {
         ]
     }
     
+    private var tamagotchi = Tamagotchi(kind: .one, level: 1)
+        
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -154,7 +156,7 @@ final class MainViewController: BaseViewController {
                 UserDefaults.standard.set(water, forKey: .water)
                 
                 self.tamagotchiView.tamagotchi.level = level == 10 ? 9 : level
-                self.tamagotchiView.updateImage()
+                self.tamagotchiView.updateImage(with: self.tamagotchi)
 
                 return "LV\(level) · 밥알 \(meal)개 · 물방울 \(water)개"
             }

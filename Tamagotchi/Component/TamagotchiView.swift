@@ -13,7 +13,6 @@ import RxCocoa
 final class TamagotchiView: UIStackView {
     private lazy var tamagotchiImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: tamagotchi.imageName)
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -21,7 +20,6 @@ final class TamagotchiView: UIStackView {
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .semibold)
-        label.text = tamagotchi.name
         label.textColor = .accent
         label.layer.cornerRadius = 4
         label.layer.borderColor = UIColor.accent.cgColor
@@ -36,6 +34,7 @@ final class TamagotchiView: UIStackView {
         self.tamagotchi = tamagotchi
         super.init(frame: .zero)
         configureUI()
+        configure(with: tamagotchi)
     }
     
     required init(coder: NSCoder) {
@@ -62,7 +61,12 @@ final class TamagotchiView: UIStackView {
         }
     }
     
-    func updateImage() {
-        tamagotchiImageView.image = UIImage(named: tamagotchi.imageName)
+    func configure(with data: Tamagotchi) {
+        tamagotchiImageView.image = UIImage(named: data.imageName)
+        nameLabel.text = data.name
+    }
+        
+    func updateImage(with data: Tamagotchi) {
+        tamagotchiImageView.image = UIImage(named: data.imageName)
     }
 }
