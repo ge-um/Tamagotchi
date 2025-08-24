@@ -67,7 +67,10 @@ final class SettingsViewController: BaseViewController {
         
         tableView.rx.itemSelected
             .bind(with: self) { owner, indexPath in
-                if indexPath.row == 2 {
+                if indexPath.row == 1 {
+                    let vc = SelectViewController()
+                    owner.navigationController?.pushViewController(vc, animated: true)
+                } else if indexPath.row == 2 {
                     let alert = UIAlertController(title: "데이터 초기화", message: "정말 다시 처음부터 시작하실 건가용?", preferredStyle: .alert)
                     
                     let cancel = UIAlertAction(title: "아냐!", style: .cancel)
