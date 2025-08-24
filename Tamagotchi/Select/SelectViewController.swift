@@ -29,8 +29,7 @@ final class SelectViewController: BaseViewController {
         return collectionView
     }()
         
-    private let tamagotchi = Observable.just((Kind.allCases + Array(repeating: Kind.none, count: 20))
-        .map { Tamagotchi(kind: $0, level: 6) })
+    private let viewModel = SelectViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,17 +51,17 @@ final class SelectViewController: BaseViewController {
     }
     
     private func bind() {
-        tamagotchi
+        let input = SelectViewModel.Input(itemSelected: collectionView.rx.modelSelected(Tamagotchi.self).asObservable())
+        let output = viewModel.transform(input: input)
+        
+        output.tamagotchi
             .bind(to: collectionView.rx.items(cellIdentifier: TamagotchiCollectionViewCell.identifier, cellType: TamagotchiCollectionViewCell.self)) { row, tamagotchi, cell in
                 cell.tamagotchiView.configure(with: tamagotchi)
             }
             .disposed(by: disposeBag)
         
-        collectionView.rx.modelSelected(Tamagotchi.self)
+        output.selectedTamagotchi
             .bind(with: self) { owner, tamagotchi in
-                
-                guard tamagotchi.kind != .none else { return }
-                
                 let vc = SelectDetailViewController()
                 
                 vc.modalPresentationStyle = .overCurrentContext
