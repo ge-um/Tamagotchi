@@ -12,7 +12,7 @@ struct Tamagotchi {
     var level: Int
     
     var name: String {
-        return kind.characteristic
+        return kind.name
     }
     
     var imageName: String {
@@ -30,7 +30,7 @@ enum Kind: Int, CaseIterable {
     case three
     case none
     
-    var characteristic: String {
+    var name: String {
         switch self {
         case .one: "따끔따끔 다마고치"
         case .two: "방실방실 다마고치"
@@ -41,7 +41,7 @@ enum Kind: Int, CaseIterable {
     
     var info: String {
         return """
-            저는 \(characteristic)입니당 키는 100km
+            저는 \(name)입니당 키는 100km
             몸무게는 150톤이에용
             성격은 화끈하고 날라다닙니당~!
             열심히 잘 먹고 잘 클 자신은
