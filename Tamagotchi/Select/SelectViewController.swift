@@ -57,20 +57,8 @@ final class SelectViewController: BaseViewController {
     private func bind() {
         tamagotchi
             .bind(to: collectionView.rx.items(cellIdentifier: TamagotchiCollectionViewCell.identifier, cellType: TamagotchiCollectionViewCell.self)) { row, tamagotchi, cell in
-//                cell.tamagotchi = tamagotchi
                 cell.tamagotchiView.configure(with: tamagotchi)
             }
             .disposed(by: disposeBag)
     }
-//    private func bind() {
-//        tamagotchi
-//            .bind(to: collectionView.rx.items(
-//                cellIdentifier: TamagotchiCollectionViewCell.identifier,
-//                cellType: TamagotchiCollectionViewCell.self
-//            )) { row, tamagotchi, cell in
-//                // configure 메서드를 통해 UI 업데이트
-//                cell.tamagotchiView.configure(with: tamagotchi)
-//            }
-//            .disposed(by: disposeBag)
-//    }
 }
