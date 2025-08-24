@@ -64,5 +64,37 @@ final class SettingsViewController: BaseViewController {
                 owner.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
             }
             .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(with: self) { owner, indexPath in
+                if indexPath.row == 2 {
+                    let alert = UIAlertController(title: "데이터 초기화", message: "정말 다시 처음부터 시작하실 건가용?", preferredStyle: .alert)
+                    
+                    let cancel = UIAlertAction(title: "아냐!", style: .cancel)
+                    cancel.setValue(UIColor.systemBlue, forKey: "titleTextColor")
+                    
+                    let confirm = UIAlertAction(title: "웅", style: .default) { _ in
+                        UserDefaults.standard.removeObject(forKey: .name)
+                        UserDefaults.standard.removeObject(forKey: .water)
+                        UserDefaults.standard.removeObject(forKey: .meal)
+                        
+                        let vc = UINavigationController(rootViewController: SelectViewController())
+                        
+                        if let sceneDelegate = UIApplication.shared.connectedScenes
+                            .first?.delegate as? SceneDelegate,
+                           let window = sceneDelegate.window {
+                            window.rootViewController = vc
+                            window.makeKeyAndVisible()
+                        }
+                    }
+                    confirm.setValue(UIColor.systemBlue, forKey: "titleTextColor")
+
+                    alert.addAction(cancel)
+                    alert.addAction(confirm)
+                    
+                    owner.present(alert, animated: true)
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }

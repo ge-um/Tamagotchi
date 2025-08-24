@@ -51,7 +51,6 @@ final class MainViewController: BaseViewController {
     }()
     
     private let name = BehaviorRelay(value: UserDefaults.standard.string(forKey: .name))
-    private let level = BehaviorRelay(value: UserDefaults.standard.string(forKey: .level))
     private let meal = BehaviorRelay(value: UserDefaults.standard.string(forKey: .meal))
     private let water = BehaviorRelay(value: UserDefaults.standard.string(forKey: .water))
     
@@ -145,14 +144,12 @@ final class MainViewController: BaseViewController {
         // TODO: - self 떼내기
         // TODO: - refactoring
         Observable.combineLatest(meal, water)
-            .compactMap { (Int($0.0 ?? "0")!, Int($0.1 ?? "0")!) }
-            .map { (meal, water) in
+            .compactMap { meal, water -> (Int, Int) in
+                (Int(meal ?? "0")!, Int(water ?? "0")!)
+            }
+            .map { (meal, water) -> String in
                 let calculated = meal/5 + water/2
                 let level = calculated < 1 ? 1 : min(calculated, 10)
-                
-                UserDefaults.standard.set(level, forKey: .level)
-                UserDefaults.standard.set(meal, forKey: .meal)
-                UserDefaults.standard.set(water, forKey: .water)
                 
                 self.tamagotchiView.tamagotchi.level = level == 10 ? 9 : level
                 self.tamagotchiView.updateImage(with: self.tamagotchi)
@@ -162,12 +159,16 @@ final class MainViewController: BaseViewController {
             .bind(to: statusLabel.rx.text)
             .disposed(by: disposeBag)
         
-                
-        NotificationCenter.default.rx
-            .notification(UserDefaults.didChangeNotification)
-            .subscribe(with: self) { owner, _ in
-                owner.name.accept(UserDefaults.standard.string(forKey: .name))
-            }
+        meal
+            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .meal) })
+            .disposed(by: disposeBag)
+
+        water
+            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .water) })
+            .disposed(by: disposeBag)
+
+        name
+            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .name) })
             .disposed(by: disposeBag)
         
         mealView.feedButton.rx.tap
