@@ -20,7 +20,6 @@ final class SelectDetailViewController: BaseViewController {
     
     private lazy var tamagotchiView: TamagotchiView = {
         let view = TamagotchiView()
-        view.tamagotchi = tamagotchi
         return view
     }()
     
@@ -32,7 +31,6 @@ final class SelectDetailViewController: BaseViewController {
     
     private lazy var messageLabel: UILabel = {
         let label = UILabel()
-        label.text = tamagotchi.message
         label.font = .systemFont(ofSize: 13)
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -73,8 +71,17 @@ final class SelectDetailViewController: BaseViewController {
         stackView.distribution = .fillEqually
         return stackView
     }()
+        
+    private let viewModel: SelectDetailViewModel
     
-    var tamagotchi = Tamagotchi(kind: .one, level: 1)
+    init(tamagotchi: Tamagotchi) {
+        viewModel = SelectDetailViewModel(tamagotchi: tamagotchi)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,10 +130,22 @@ final class SelectDetailViewController: BaseViewController {
     }
     
     private func bind() {
-        startButton.rx.tap
-            .bind(with: self) { owner, _ in
+        let input = SelectDetailViewModel.Input(startTap: startButton.rx.tap.asObservable(), cancelTap: cancelButton.rx.tap.asObservable())
+        let output = viewModel.transform(input: input)
+        
+        output.tamagotchi
+            .asDriver(onErrorJustReturn: Tamagotchi(kind: .none, level: 0))
+            .drive(with: self) { owner, tamagotchi in
+                owner.tamagotchiView.configure(with: tamagotchi)
+                owner.messageLabel.text = tamagotchi.message
+            }
+            .disposed(by: disposeBag)
+        
+        output.changeRoot
+            .asDriver(onErrorJustReturn: Tamagotchi(kind: .one, level: 1))
+            .drive(with: self) { owner, tamagotchi in
                 let mainVc = MainViewController()
-                mainVc.tamagotchi = owner.tamagotchi
+                mainVc.tamagotchi = tamagotchi
                 let vc = UINavigationController(rootViewController: mainVc)
                 
                 if let sceneDelegate = UIApplication.shared.connectedScenes
@@ -138,8 +157,9 @@ final class SelectDetailViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        cancelButton.rx.tap
-            .bind(with: self) { owner, _ in
+        output.dismiss
+            .asSignal(onErrorJustReturn: ())
+            .emit(with: self) { owner, _ in
                 owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)

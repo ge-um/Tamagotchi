@@ -6,7 +6,6 @@
 //
 
 import SnapKit
-import RxCocoa
 import RxSwift
 import UIKit
 
@@ -62,11 +61,11 @@ final class SelectViewController: BaseViewController {
         
         output.selectedTamagotchi
             .bind(with: self) { owner, tamagotchi in
-                let vc = SelectDetailViewController()
+                let vc = SelectDetailViewController(tamagotchi: tamagotchi)
                 
                 vc.modalPresentationStyle = .overCurrentContext
                 vc.modalTransitionStyle = .crossDissolve
-                vc.tamagotchi = tamagotchi
+//                vc.tamagotchi = tamagotchi
                 
                 owner.present(vc, animated: true)
             }
