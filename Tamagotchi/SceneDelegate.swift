@@ -16,7 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        let vc = UserDefaults.standard.string(forKey: .name) == nil ? SelectViewController() : MainViewController()
+        // TODO: tamagotchi userdefaults에 저장후 변경
+        let vc = UserDefaults.standard.string(forKey: .name) == nil ? SelectViewController() : MainViewController(tamagotchi: Tamagotchi(kind: .one, level: 1))
         window?.rootViewController = UINavigationController(rootViewController: vc)
         window?.makeKeyAndVisible()
     }

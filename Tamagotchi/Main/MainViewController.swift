@@ -65,12 +65,17 @@ final class MainViewController: BaseViewController {
         ]
     }
     
-    var tamagotchi = Tamagotchi(kind: .one, level: 1) {
-        didSet {
-            tamagotchiView.tamagotchi = tamagotchi
-        }
+    private let viewModel: MainViewModel
+    
+    init(tamagotchi: Tamagotchi) {
+        viewModel = MainViewModel(tamagotchi: tamagotchi)
+        super.init(nibName: nil, bundle: nil)
     }
-            
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigation()
@@ -127,6 +132,16 @@ final class MainViewController: BaseViewController {
     }
     
     private func bind() {
+        let input = MainViewModel.Input()
+        let output = viewModel.transform(input: input)
+        
+        output.tamagotchi
+            .bind(with: self) { owner, tamagotchi in
+                owner.tamagotchiView.configure(with: tamagotchi)
+            }
+            .disposed(by: disposeBag)
+            
+        
         name
             .compactMap { $0 }
             .map { "\($0)님의 다마고치" }
@@ -153,10 +168,10 @@ final class MainViewController: BaseViewController {
             }
             .map { (meal, water) -> String in
                 let calculated = meal/5 + water/2
-                let level = calculated < 1 ? 1 : min(calculated, 10)
+                let level = (calculated < 1) ? 1 : min(calculated, 10)
                 
-                self.tamagotchiView.tamagotchi.level = level == 10 ? 9 : level
-                self.tamagotchiView.updateImage(with: self.tamagotchi)
+//                self.tamagotchiView.tamagotchi.level = level == 10 ? 9 : level
+//                self.tamagotchiView.updateImage(with: self.tamagotchi)
 
                 return "LV\(level) · 밥알 \(meal)개 · 물방울 \(water)개"
             }
