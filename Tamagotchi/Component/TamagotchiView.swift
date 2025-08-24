@@ -30,7 +30,7 @@ final class TamagotchiView: UIStackView {
     
     var tamagotchi = Tamagotchi(kind: .one, level: 1) {
         didSet {
-            tamagotchiImageView.image = UIImage(named: tamagotchi.imageName)
+            configure(with: tamagotchi)
         }
     }
     
