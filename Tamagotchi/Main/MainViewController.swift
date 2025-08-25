@@ -173,14 +173,6 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        meal
-            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .meal) })
-            .disposed(by: disposeBag)
-
-        water
-            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .water) })
-            .disposed(by: disposeBag)
-
         name
             .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .name) })
             .disposed(by: disposeBag)

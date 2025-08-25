@@ -30,7 +30,7 @@ final class MainViewModel: InputOutput {
     
     let meal = BehaviorSubject(value: UserDefaults.standard.integer(forKey: .meal) ?? 0)
     let water = BehaviorSubject(value: UserDefaults.standard.integer(forKey: .water) ?? 0)
-    let level = BehaviorSubject(value: UserDefaults.standard.integer(forKey: .level) ?? 1)
+    let level = BehaviorSubject(value: 1)
     
     init(tamagotchi: Tamagotchi) {
         self.tamagotchi = tamagotchi
@@ -88,6 +88,14 @@ final class MainViewModel: InputOutput {
             .map { meal, water, level in
                 "LV\(level) · 밥알 \(meal)개 · 물방울 \(water)개"
             }
+        
+        water
+            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .water) })
+            .disposed(by: disposeBag)
+        
+        meal
+            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .meal) })
+            .disposed(by: disposeBag)
                     
         return Output(tamagotchi: updatedTamagotchi, title: title, message: message, status: status)
     }

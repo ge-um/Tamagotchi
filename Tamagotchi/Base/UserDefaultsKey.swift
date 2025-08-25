@@ -11,7 +11,6 @@ enum UserDefaultsKey: String {
     case name
     case meal
     case water
-    case level
 }
 
 extension UserDefaults {
