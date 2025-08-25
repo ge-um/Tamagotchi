@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let lottoViewController = LottoViewController()
         lottoViewController.tabBarItem = .init(tabBarSystemItem: .bookmarks, tag: 0)
         
-        let boxOfficeViewController = UIViewController()
+        let boxOfficeViewController = BoxOfficeViewController()
         boxOfficeViewController.tabBarItem = .init(tabBarSystemItem: .search, tag: 1)
         
         let mainViewController = MainViewController(tamagotchi: Tamagotchi(kind: .one, level: 1))

@@ -11,10 +11,12 @@
 		03A489782E583E3200626548 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 03A489772E583E3200626548 /* RxSwift */; };
 		03A4897B2E583E4200626548 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 03A4897A2E583E4200626548 /* SnapKit */; };
 		03BFFD5C2E5C913500F13B59 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 03BFFD5B2E5C913500F13B59 /* Alamofire */; };
+		03BFFE802E5CB07400F13B59 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 03BFFE7F2E5CB06D00F13B59 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		03A4895C2E58362300626548 /* Tamagotchi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tamagotchi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03BFFE7F2E5CB06D00F13B59 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -56,6 +58,7 @@
 		03A489532E58362300626548 = {
 			isa = PBXGroup;
 			children = (
+				03BFFE7F2E5CB06D00F13B59 /* .gitignore */,
 				03A4895E2E58362300626548 /* Tamagotchi */,
 				03A4895D2E58362300626548 /* Products */,
 			);
@@ -142,6 +145,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03BFFE802E5CB07400F13B59 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
