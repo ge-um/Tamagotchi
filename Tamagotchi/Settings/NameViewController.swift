@@ -21,6 +21,8 @@ final class NameViewController: BaseViewController {
         view.backgroundColor = .accent
         return view
     }()
+    
+    private let viewModel = NameViewModel()
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,9 +56,17 @@ final class NameViewController: BaseViewController {
     }
     
     private func bind() {
-        navigationItem.rightBarButtonItem?.rx.tap
-            .withLatestFrom(textField.rx.text.orEmpty)
-            .filter { (2...6) ~= $0.count }
+        let input = NameViewModel.Input(rightBarButtonTapped:
+                                            navigationItem.rightBarButtonItem!.rx.tap
+                                            .withLatestFrom(textField.rx.text.orEmpty)
+//                                            .compactMap { $0 }
+        )
+        let output = viewModel.transform(input: input)
+        
+//        navigationItem.rightBarButtonItem?.rx.tap
+//            .withLatestFrom(textField.rx.text.orEmpty)
+//            .filter { (2...6) ~= $0.count }
+        output.pop
             .subscribe(with: self) { owner, name in
                 UserDefaults.standard.set(name, forKey: .name)
                 owner.navigationController?.popViewController(animated: true)
