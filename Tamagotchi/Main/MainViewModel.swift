@@ -12,6 +12,7 @@ import RxSwift
 final class MainViewModel: InputOutput {
     struct Input {
         let viewWillAppear: Observable<Void>
+        let rightBarButtonTapped: Observable<Void>
         let addMeal: Observable<String>
         let addWater: Observable<String>
     }
@@ -21,6 +22,7 @@ final class MainViewModel: InputOutput {
         let title: Observable<String>
         let message: Observable<String>
         let status: Observable<String>
+        let navigateToSettings: Observable<Void>
     }
     
     private let disposeBag = DisposeBag()
@@ -35,7 +37,7 @@ final class MainViewModel: InputOutput {
         self.tamagotchi = tamagotchi
     }
     
-    func transform(input: Input) -> Output {
+    func transform(input: Input) -> Output {        
         let name = input.viewWillAppear
             .map { UserDefaults.standard.string(forKey: .name) ?? "대장" }
             .share()
@@ -104,8 +106,10 @@ final class MainViewModel: InputOutput {
         meal
             .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .meal) })
             .disposed(by: disposeBag)
+        
+        let navigateToSettings = input.rightBarButtonTapped
                     
-        return Output(tamagotchi: updatedTamagotchi, title: title, message: message, status: status)
+        return Output(tamagotchi: updatedTamagotchi, title: title, message: message, status: status, navigateToSettings: navigateToSettings)
     }
     
     private func randomMessage(userName: String) -> String {

@@ -139,6 +139,7 @@ final class MainViewController: BaseViewController {
     private func bind() {
         let input = MainViewModel.Input(
             viewWillAppear: rx.methodInvoked(#selector(viewWillAppear)).map { _ in },
+            rightBarButtonTapped: navigationItem.rightBarButtonItem!.rx.tap.asObservable(),
             addMeal: mealView.feedButton.rx.tap
                 .withLatestFrom(mealView.textField.rx.text.orEmpty),
             addWater: waterView.feedButton.rx.tap
@@ -165,16 +166,12 @@ final class MainViewController: BaseViewController {
             .bind(to: statusLabel.rx.text)
             .disposed(by: disposeBag)
         
-        navigationItem.rightBarButtonItem?.rx.tap
-            .asDriver()
+        output.navigateToSettings
+            .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 let vc = SettingsViewController()
                 owner.navigationController?.pushViewController(vc, animated: true)
             }
             .disposed(by: disposeBag)
-//        
-//        name
-//            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .name) })
-//            .disposed(by: disposeBag)
     }
 }
