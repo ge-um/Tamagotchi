@@ -172,9 +172,9 @@ final class MainViewController: BaseViewController {
                 owner.navigationController?.pushViewController(vc, animated: true)
             }
             .disposed(by: disposeBag)
-        
-        name
-            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .name) })
-            .disposed(by: disposeBag)
+//        
+//        name
+//            .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .name) })
+//            .disposed(by: disposeBag)
     }
 }
