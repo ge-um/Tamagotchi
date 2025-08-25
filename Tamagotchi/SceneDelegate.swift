@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let tabBarController = UITabBarController()
         
-        let lottoViewController = UIViewController()
+        let lottoViewController = LottoViewController()
         lottoViewController.tabBarItem = .init(tabBarSystemItem: .bookmarks, tag: 0)
         
         let boxOfficeViewController = UIViewController()
