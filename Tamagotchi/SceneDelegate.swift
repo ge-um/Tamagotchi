@@ -16,8 +16,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
+        let tabBarController = UITabBarController()
+        
+        let lottoViewController = UIViewController()
+        lottoViewController.tabBarItem = .init(tabBarSystemItem: .bookmarks, tag: 0)
+        
+        let boxOfficeViewController = UIViewController()
+        boxOfficeViewController.tabBarItem = .init(tabBarSystemItem: .search, tag: 1)
+        
+        let mainViewController = MainViewController(tamagotchi: Tamagotchi(kind: .one, level: 1))
+        mainViewController.tabBarItem = .init(tabBarSystemItem: .featured, tag: 2)
+
+        tabBarController.viewControllers = [lottoViewController, boxOfficeViewController, mainViewController]
+        
         // TODO: tamagotchi userdefaults에 저장후 변경
-        let vc = UserDefaults.standard.string(forKey: .name) == nil ? SelectViewController() : MainViewController(tamagotchi: Tamagotchi(kind: .one, level: 1))
+        let vc = UserDefaults.standard.string(forKey: .name) == nil ? SelectViewController() : tabBarController
         window?.rootViewController = UINavigationController(rootViewController: vc)
         window?.makeKeyAndVisible()
     }
