@@ -16,7 +16,14 @@ struct Tamagotchi {
     }
     
     var imageName: String {
-        return kind == .none ? "noImage" : "\(kind.rawValue)-\(level)"
+        if kind == .none {
+            return "noImage"
+        }
+        if level == 10 {
+            return "\(kind.rawValue)-9"
+        }
+        
+        return "\(kind.rawValue)-\(level)"
     }
     
     var message: String {

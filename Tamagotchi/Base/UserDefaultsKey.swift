@@ -11,6 +11,7 @@ enum UserDefaultsKey: String {
     case name
     case meal
     case water
+    case level
 }
 
 extension UserDefaults {
@@ -20,6 +21,10 @@ extension UserDefaults {
     
     func string(forKey key: UserDefaultsKey) -> String? {
         string(forKey: key.rawValue)
+    }
+    
+    func integer(forKey key: UserDefaultsKey) -> Int? {
+        integer(forKey: key.rawValue)
     }
     
     func removeObject(forKey key: UserDefaultsKey) {

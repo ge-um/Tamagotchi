@@ -137,7 +137,14 @@ final class MainViewController: BaseViewController {
     }
     
     private func bind() {
-        let input = MainViewModel.Input(viewWillAppear: rx.methodInvoked(#selector(viewWillAppear)).map { _ in })
+        let input = MainViewModel.Input(
+            viewWillAppear: rx.methodInvoked(#selector(viewWillAppear)).map { _ in },
+            addMeal: mealView.feedButton.rx.tap
+                .withLatestFrom(mealView.textField.rx.text.orEmpty),
+            addWater: waterView.feedButton.rx.tap
+                .withLatestFrom(waterView.textField.rx.text.orEmpty)
+        )
+        
         let output = viewModel.transform(input: input)
         
         output.tamagotchi
@@ -154,29 +161,15 @@ final class MainViewController: BaseViewController {
             .bind(to: messageLabel.rx.text)
             .disposed(by: disposeBag)
         
+        output.status
+            .bind(to: statusLabel.rx.text)
+            .disposed(by: disposeBag)
+        
         navigationItem.rightBarButtonItem?.rx.tap
             .asDriver()
             .drive(with: self) { owner, _ in
                 let vc = SettingsViewController()
                 owner.navigationController?.pushViewController(vc, animated: true)
-            }
-            .disposed(by: disposeBag)
-
-        Observable.combineLatest(meal, water)
-            .compactMap { meal, water -> (Int, Int) in
-                (Int(meal ?? "0")!, Int(water ?? "0")!)
-            }
-            .map { (meal, water) -> Tamagotchi in
-                let calculated = meal/5 + water/2
-                let level = max(1, min(calculated, 10))
-                
-                var updatedTamagotchi = self.tamagotchi
-                updatedTamagotchi.level = level == 10 ? 9 : level
-                return updatedTamagotchi
-            }
-            .bind(with: self) { owner, updatedTamagotchi in
-                owner.tamagotchiView.tamagotchi = updatedTamagotchi
-                owner.statusLabel.text = "LV\(updatedTamagotchi.level) · 밥알 \(owner.meal.value ?? "0")개 · 물방울 \(owner.water.value ?? "0")개"
             }
             .disposed(by: disposeBag)
         
@@ -190,30 +183,6 @@ final class MainViewController: BaseViewController {
 
         name
             .subscribe(onNext: { UserDefaults.standard.set($0, forKey: .name) })
-            .disposed(by: disposeBag)
-        
-        mealView.feedButton.rx.tap
-            .withLatestFrom(mealView.textField.rx.text.orEmpty)
-            .filter { $0.allSatisfy { $0.isNumber } }
-            .compactMap { Int($0) ?? 1 }
-            .filter { $0 < 100 }
-            .subscribe(with: self) { owner, add in
-                let count = Int(owner.meal.value ?? "0")! + add
-                owner.meal.accept("\(count)")
-                owner.messageLabel.text = owner.talks.randomElement()!
-            }
-            .disposed(by: disposeBag)
-
-        waterView.feedButton.rx.tap
-            .withLatestFrom(waterView.textField.rx.text.orEmpty)
-            .filter { $0.allSatisfy { $0.isNumber } }
-            .compactMap { Int($0) ?? 1 }
-            .filter { $0 < 50 }
-            .subscribe(with: self) { owner, add in
-                let count = Int(owner.water.value ?? "0")! + add
-                owner.water.accept("\(count)")
-                owner.messageLabel.text = owner.talks.randomElement()!
-            }
             .disposed(by: disposeBag)
     }
 }

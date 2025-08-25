@@ -12,24 +12,31 @@ import RxSwift
 final class MainViewModel: InputOutput {
     struct Input {
         let viewWillAppear: Observable<Void>
+        let addMeal: Observable<String>
+        let addWater: Observable<String>
     }
     
     struct Output {
         let tamagotchi: Observable<Tamagotchi>
         let title: Observable<String>
         let message: Observable<String>
+        let status: Observable<String>
     }
+    
+    private let disposeBag = DisposeBag()
     
     private let tamagotchi: Tamagotchi
     private let userName = UserDefaults.standard.string(forKey: .name) ?? "대장"
+    
+    let meal = BehaviorSubject(value: UserDefaults.standard.integer(forKey: .meal) ?? 0)
+    let water = BehaviorSubject(value: UserDefaults.standard.integer(forKey: .water) ?? 0)
+    let level = BehaviorSubject(value: UserDefaults.standard.integer(forKey: .level) ?? 1)
     
     init(tamagotchi: Tamagotchi) {
         self.tamagotchi = tamagotchi
     }
     
-    func transform(input: Input) -> Output {
-        let tamagotchi = Observable.just(tamagotchi)
-        
+    func transform(input: Input) -> Output {        
         let title = input.viewWillAppear
             .withUnretained(self)
             .map { "\($0.0.userName)님의 다마고치"}
@@ -37,8 +44,52 @@ final class MainViewModel: InputOutput {
         let message = input.viewWillAppear
             .withUnretained(self)
             .map { $0.0.randomMessage() }
-            
-        return Output(tamagotchi: tamagotchi, title: title, message: message)
+
+        input.addMeal
+            .filter { $0.allSatisfy { $0.isNumber } }
+            .compactMap { Int($0) ?? 1 }
+            .filter { $0 < 100 }
+            .withLatestFrom(meal) { add, current in
+                current + add
+            }
+            .bind(to: meal)
+            .disposed(by: disposeBag)
+        
+        input.addWater
+            .filter { $0.allSatisfy { $0.isNumber } }
+            .compactMap { Int($0) ?? 1 }
+            .filter { $0 < 50 }
+            .withLatestFrom(water) { add, current in
+                current + add
+            }
+            .bind(to: water)
+            .disposed(by: disposeBag)
+        
+        let updatedLevel = Observable.combineLatest(meal, water)
+            .map { meal, water in
+                let calculated = meal/5 + water/2
+                let level = max(1, min(calculated, 10))
+                return level
+            }
+            .share()
+        
+        updatedLevel
+            .bind(to: level)
+            .disposed(by: disposeBag)
+        
+        let updatedTamagotchi = updatedLevel
+            .map { [unowned self] newLevel -> Tamagotchi in
+                var newTamagotchi = self.tamagotchi
+                newTamagotchi.level = newLevel
+                return newTamagotchi
+            }
+        
+        let status = Observable.combineLatest(meal, water, level)
+            .map { meal, water, level in
+                "LV\(level) · 밥알 \(meal)개 · 물방울 \(water)개"
+            }
+                    
+        return Output(tamagotchi: updatedTamagotchi, title: title, message: message, status: status)
     }
     
     private func randomMessage() -> String {
