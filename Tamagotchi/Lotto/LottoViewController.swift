@@ -25,7 +25,6 @@ final class LottoViewController: BaseViewController {
     
     private let label: UILabel = {
         let label = UILabel()
-        label.text = "ㅎㅎ"
         return label
     }()
     
